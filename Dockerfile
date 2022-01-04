@@ -100,7 +100,12 @@ RUN wget --tries=5 -q https://access.redhat.com/sites/default/files/find_unicode
     ##############################
     # Installs ruby dependencies #
     ##############################
-    && bundle install
+    && bundle install \
+    ###############################
+    # Install python dependencies #
+    ############################### \
+    && cd dependencies \
+    && ./build-python-binaries.sh
 
 ##############################
 # Installs Perl dependencies #
@@ -279,15 +284,6 @@ RUN apk add --no-cache rakudo zef \
     && find /node_modules/ -type f -name '*.md' -exec rm {} + \
     && find /node_modules/ -type f -name '*.txt' -exec rm {} + \
     && find /usr/ -type f -name '*.md' -exec rm {} +
-
-################################
-# Build python dependencies #
-################################
-FROM base_image as python_deps
-RUN mkdir /data
-COPY dependencies /data
-WORKDIR /data
-RUN ./build-python-binaries.sh
 
 ################################################################################
 # Grab small clean image #######################################################
