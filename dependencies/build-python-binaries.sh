@@ -12,7 +12,6 @@ set -euo pipefail
 # Install basic libs to run installers #
 ########################################
 pip install pipx
-pipx ensurepath
 
 #########################################################
 # Iterate through requirements.txt to install binaries #

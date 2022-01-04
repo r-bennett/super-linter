@@ -104,7 +104,6 @@ RUN wget --tries=5 -q https://access.redhat.com/sites/default/files/find_unicode
     ###############################
     # Install python dependencies #
     ############################### \
-    && cd dependencies \
     && ./build-python-binaries.sh
 
 ##############################
@@ -381,7 +380,7 @@ RUN sh -c 'curl -sS https://getcomposer.org/installer | php -- --install-dir=/us
 ########################################
 # Add node packages to path and dotnet #
 ########################################
-ENV PATH="${PATH}:/node_modules/.bin"
+ENV PATH="${PATH}:/node_modules/.bin:/root/.local/bin"
 
 #############################
 # Copy scripts to container #
