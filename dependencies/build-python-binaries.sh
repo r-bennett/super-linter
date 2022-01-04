@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ################################################################################
-########################### Install Python Dependancies ########################
+########################### Install Python Dependencies ########################
 ################################################################################
 
 #####################
@@ -15,7 +15,7 @@ pip install pipx
 pipx ensurepath
 
 #########################################################
-# Itterate through requirments.txt to install bainaries #
+# Iterate through requirements.txt to install binaries #
 #########################################################
 while read -r line; do
   # Install dependency
