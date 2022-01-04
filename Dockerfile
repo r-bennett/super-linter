@@ -85,20 +85,16 @@ RUN apk add --no-cache \
 COPY dependencies/* /
 
 ################################
-# Installs python dependencies #
+# Installs dependencies #
 ################################
-RUN pip3 install --no-cache-dir pipenv \
-    # Bug in hadolint thinks pipenv is pip
-    # hadolint ignore=DL3042
-    && pipenv install --clear --system \
-    && wget --tries=5 -q https://access.redhat.com/sites/default/files/find_unicode_control2--${UNICODE_VERSION}.zip -O - -q | unzip -q - \
+RUN wget --tries=5 -q https://access.redhat.com/sites/default/files/find_unicode_control2--${UNICODE_VERSION}.zip -O - -q | unzip -q - \
     && mv find_unicode_control2.py /usr/local/bin/find_unicode_control2.py \
     && chmod +x /usr/local/bin/find_unicode_control2.py \
+    && npm config set package-lock false \
+    && npm config set loglevel error \
     ####################
     # Run NPM Installs #
     ####################
-    && npm config set package-lock false \
-    && npm config set loglevel error \
     && npm --no-cache install \
     && npm audit fix --audit-level=critical \
     ##############################
@@ -284,6 +280,13 @@ RUN apk add --no-cache rakudo zef \
     && find /node_modules/ -type f -name '*.txt' -exec rm {} + \
     && find /usr/ -type f -name '*.md' -exec rm {} +
 
+################################
+# Build python dependencies #
+################################
+FROM base_image as python_deps
+COPY dependencies .
+RUN ./build-python-binaries.sh
+
 ################################################################################
 # Grab small clean image #######################################################
 ################################################################################
@@ -371,6 +374,7 @@ COPY --from=base_image /bin/ /bin/
 COPY --from=base_image /node_modules/ /node_modules/
 COPY --from=base_image /home/r-library /home/r-library
 COPY --from=base_image /root/.tflint.d/ /root/.tflint.d/
+COPY --from=python_deps /usr/stage/ /user/bin/
 
 ####################################################
 # Install Composer after all Libs have been copied #
